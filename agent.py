@@ -99,52 +99,98 @@ def run_scan() -> List[Opportunity]:
 
 
 def run_demo_scan() -> List[Opportunity]:
-    """Return a set of fake opportunities for demo / testing purposes."""
-    from datetime import datetime
-
+    """
+    Demo opportunities — realistic examples tuned to this user's actual background:
+    AI sales engineer + builder of uPath.ai + polymath creator + trader.
+    """
     demo_opps = [
+        # ── Freelance: AI consulting — perfect fit for their Inbenta + uPath background ──
         Opportunity(
-            id="demo_freelance_1",
+            id="demo_freelance_ai_consult",
             opp_type=OpportunityType.FREELANCE,
-            title="[Hiring] Python developer needed for data pipeline — $80/hr",
+            title="[Hiring] AI Solutions Consultant for Enterprise SaaS — $150-200/hr, remote",
             description=(
-                "We need an experienced Python developer to build an ETL pipeline "
-                "that pulls data from 3 REST APIs, transforms it, and loads it into "
-                "Postgres. Budget: $80/hr, ~20 hours of work. Must have experience "
-                "with SQLAlchemy, requests, and pandas."
+                "We're a Series B SaaS company (200 employees) looking for an AI consultant "
+                "to help us integrate LLM-based features into our product. We need someone who "
+                "understands both the technical side (prompt engineering, multi-agent systems, "
+                "RAG pipelines) AND can communicate strategy to non-technical executives. "
+                "This is a 3-month engagement, ~15hrs/week. Previous experience with enterprise "
+                "AI products required. Bonus: experience in sales engineering or pre-sales."
             ),
-            source_url="https://reddit.com/r/forhire/comments/demo1",
+            source_url="https://reddit.com/r/forhire/comments/ai_consult_demo",
             source="reddit",
-            raw_data={"subreddit": "forhire", "score": 12, "num_comments": 4},
+            raw_data={"subreddit": "forhire", "score": 34, "num_comments": 8},
         ),
+        # ── Freelance: Sales engineer contract — direct match ──
         Opportunity(
-            id="demo_problem_1",
-            opp_type=OpportunityType.REDDIT_PROBLEM,
-            title="Ask HN: Is there a tool that auto-summarises Slack threads for standups?",
+            id="demo_freelance_sales_eng",
+            opp_type=OpportunityType.FREELANCE,
+            title="[Hiring] Fractional Sales Engineer for AI startup — equity + $120/hr",
             description=(
-                "Every morning I spend 20 minutes reading Slack threads to write my standup. "
-                "I'd pay $30/month for a bot that reads the threads I was tagged in and gives "
-                "me a bullet-point summary. Does this exist? Comments show 15+ people agreeing."
+                "Early-stage AI startup (just closed seed) needs a fractional sales engineer "
+                "for 3-6 months to help close our first 10 enterprise customers. You'll own "
+                "technical demos, POC builds, and RFP responses. Product is an AI knowledge "
+                "management platform. We need someone who's done this before at an AI company "
+                "and can hit the ground running. 20hrs/week, flexible schedule."
             ),
-            source_url="https://news.ycombinator.com/item?id=demo1",
+            source_url="https://news.ycombinator.com/item?id=sales_eng_demo",
             source="hackernews",
-            raw_data={"score": 87, "num_comments": 43},
+            raw_data={"score": 52, "num_comments": 19},
         ),
+        # ── Problem → Product: AI tool gap that overlaps with uPath.ai ──
         Opportunity(
-            id="demo_market_1",
-            opp_type=OpportunityType.MARKET,
-            title="NVDA: UP 4.2% today | Volume 2.8x average | RSI 58",
+            id="demo_problem_ai_sales",
+            opp_type=OpportunityType.REDDIT_PROBLEM,
+            title="r/sales: Our AEs spend 3 hours/day on CRM updates and follow-up emails — there HAS to be a better way",
             description=(
-                "Ticker: NVDA\nCompany: NVIDIA Corporation\nSector: Technology\n"
-                "Market Cap: $2.1T\nPrice: $875.40\n1-Day Change: +4.20%\n"
-                "Volume Factor: 2.8x avg\nRSI (14): 58.3\n"
-                "Signals: UP 4.2% today | Volume 2.8x average"
+                "Posted in r/sales with 340 upvotes and 180 comments. "
+                "Sales teams are drowning in admin: updating Salesforce after every call, "
+                "writing follow-up emails, summarising meeting notes. Multiple commenters saying "
+                "they'd pay $50-100/month per seat for a tool that listens to calls and "
+                "auto-populates CRM fields + drafts follow-ups. Existing tools like Gong are "
+                "$1,200+/yr per seat — too expensive for SMBs. The thread has 3 different people "
+                "saying 'someone should build this.' Gap in the market for an SMB-focused version."
             ),
-            source_url="https://finance.yahoo.com/quote/NVDA",
+            source_url="https://reddit.com/r/sales/comments/crm_pain_demo",
+            source="reddit",
+            raw_data={"subreddit": "sales", "score": 340, "num_comments": 180},
+        ),
+        # ── Problem → Product: Content / brand opportunity ──
+        Opportunity(
+            id="demo_content_polymath",
+            opp_type=OpportunityType.CONTENT,
+            title="Trending: 'The death of the specialist — why companies are hiring polymaths in the AI era'",
+            description=(
+                "Multiple viral threads on X this week around generalists vs specialists in the "
+                "age of AI. The argument: AI commoditises specialist knowledge, so the new premium "
+                "is people who can connect dots across domains — exactly the 'polymath' positioning "
+                "this person has been building. This is a direct on-ramp to write the definitive "
+                "piece on this topic from the POV of someone actually building AI tools as a "
+                "multi-domain builder. High potential for viral distribution and consulting pipeline."
+            ),
+            source_url="https://twitter.com/search?q=polymath+AI+generalist",
+            source="twitter_trend",
+            raw_data={"engagement": "high", "trend_age": "48hrs"},
+        ),
+        # ── Market: AI sector momentum ──
+        Opportunity(
+            id="demo_market_ai_sector",
+            opp_type=OpportunityType.MARKET,
+            title="PLTR: UP 6.1% today | Volume 3.4x average | AI government contracts narrative",
+            description=(
+                "Ticker: PLTR\nCompany: Palantir Technologies\nSector: AI / Defense Tech\n"
+                "Market Cap: $52B\nPrice: $23.80\n1-Day Change: +6.10%\n"
+                "Volume Factor: 3.4x avg\nRSI (14): 62.4\n"
+                "Catalyst: DoD contract renewal + AIP (AI Platform) enterprise expansion news.\n"
+                "Signals: Strong momentum | Heavy volume | AI narrative tailwind | "
+                "Institutional accumulation pattern on the daily chart."
+            ),
+            source_url="https://finance.yahoo.com/quote/PLTR",
             source="market",
             raw_data={
-                "ticker": "NVDA", "price": 875.40,
-                "pct_change": 0.042, "vol_factor": 2.8, "rsi": 58.3,
+                "ticker": "PLTR", "price": 23.80,
+                "pct_change": 0.061, "vol_factor": 3.4, "rsi": 62.4,
+                "sector": "AI/Defense",
             },
         ),
     ]

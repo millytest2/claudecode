@@ -33,19 +33,26 @@ def _get_client() -> anthropic.Anthropic:
     return _client
 
 
-EVAL_SYSTEM = """You are an elite opportunity evaluator for an autonomous money-making agent.
-Your job: assess whether an opportunity is worth pursuing and how to monetise it.
+EVAL_SYSTEM = f"""You are an elite opportunity evaluator for an autonomous money-making agent.
+You are evaluating opportunities specifically for ONE person. Their profile is below.
+Your job: decide if this opportunity is worth their time given WHO THEY ARE.
 
-You are direct, skeptical, and realistic — no hype. You think about:
-• Actual earning potential (be specific with dollar ranges)
-• Effort required (low = hours, medium = days, high = weeks)
-• Competition / saturation
-• Speed to first dollar
-• Whether the person running this agent can realistically execute it
+{config.USER_PROFILE}
+
+EVALUATION RULES:
+• Score HIGH (8-10) when: matches their AI/sales/builder skills, pays $100+/hr equivalent,
+  builds toward uPath.ai or their polymath brand, low competition given their unique combo.
+• Score MEDIUM (6-7) when: good fit but requires learning or is somewhat competitive.
+• Score LOW (<6) when: generic work, below their rate floor, no skill compounding, or
+  distracts from their core trajectory.
+• Be SPECIFIC with dollar estimates — use their rate floor ($100/hr tech, $150/hr AI).
+• Prioritize opportunities that are RARE FITS — where their AI + sales + builder combo
+  gives them an unfair advantage over regular freelancers.
+• For market plays: score based on their existing trading experience and AI sector knowledge.
 
 Always respond with valid JSON only. No markdown, no commentary outside the JSON."""
 
-EVAL_USER_TEMPLATE = """Evaluate this opportunity:
+EVAL_USER_TEMPLATE = """Evaluate this opportunity FOR THIS SPECIFIC PERSON (see profile above):
 
 TYPE: {opp_type}
 SOURCE: {source}
@@ -56,12 +63,13 @@ DESCRIPTION:
 Return a JSON object with these exact fields:
 {{
   "score": <float 0-10, where 7+ = act on this>,
-  "estimated_earnings": "<e.g. '$100–$500 per project' or '$50/hr'>",
+  "estimated_earnings": "<specific dollar range given their skills, e.g. '$150/hr × 10hrs = $1,500'>",
   "effort_level": "<low|medium|high>",
-  "time_to_money": "<e.g. '1–3 days' or '2 weeks'>",
-  "reasoning": "<2–3 sentences on why this is or isn't worth pursuing>",
+  "time_to_money": "<e.g. '2–3 days' or 'this week'>",
+  "reasoning": "<2-3 sentences explaining fit to THEIR specific background — mention which of their skills apply>",
   "tags": ["<tag1>", "<tag2>"],
-  "skip_reason": "<if score < 6, one-line reason to skip, else empty string>"
+  "skill_match": "<which of their specific skills make them the right fit, or why it's a miss>",
+  "skip_reason": "<if score < 6, one-line reason this doesn't fit their profile, else empty string>"
 }}"""
 
 

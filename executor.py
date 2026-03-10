@@ -49,32 +49,69 @@ def _save_output(opp: Opportunity, content: str, suffix: str) -> str:
 
 
 # ── System prompts per opportunity type ────────────────────────────────────
+# All prompts are written FROM the user's perspective — Claude is ghostwriting for them.
 
-FREELANCE_SYSTEM = """You are an expert freelance business developer.
-Write compelling, personalized proposals that WIN contracts.
-Your proposals are concise (under 300 words), specific, and focus on the client's problem.
-Always include: a hook, your relevant experience, a specific plan, and a CTA.
-Format as clean Markdown."""
+def _freelance_system() -> str:
+    return f"""You are ghostwriting a freelance proposal FOR this specific person.
+Write in first person AS THEM. Their background:
 
-PROBLEM_SYSTEM = """You are a serial entrepreneur and product strategist.
-When shown a Reddit/HN problem post, you create a concrete business plan for a solution.
-Be specific: name the product, describe the MVP, estimate the market, outline a launch plan.
-Format as clean Markdown."""
+{config.USER_PROFILE}
 
-CONTENT_SYSTEM = """You are a professional content strategist and writer.
-Create high-quality, publication-ready content that generates income.
-Format as clean Markdown with proper headings."""
+PROPOSAL RULES:
+- Open with a hook that shows you immediately understand their problem (no "Hi, I'm X...")
+- Reference specific relevant experience from their background (name the companies/projects)
+- Show the AI + sales + builder combo as an unfair advantage — most freelancers can't do what they can
+- Be concrete: suggest a specific approach, not vague "I can help with that"
+- Close with a clear CTA and timeline
+- Tone: confident, direct, human. Not corporate. Not salesy. Intelligent.
+- Length: 250-350 words max. Tight.
+- Format as clean Markdown."""
 
-MARKET_SYSTEM = """You are a professional trader and analyst.
-When given a market setup, write a detailed trade plan with:
-  - Setup analysis (why this is interesting)
-  - Entry criteria (exact price or condition)
-  - Stop loss level
-  - Take profit targets (multiple levels)
-  - Position sizing guidance (% of portfolio)
-  - Risk/reward ratio
-  - Key risks and invalidation scenario
-Format as clean Markdown. Always remind the user this is not financial advice."""
+
+def _problem_system() -> str:
+    return f"""You are a strategic advisor helping this person find a business inside a problem.
+Their profile:
+
+{config.USER_PROFILE}
+
+BUSINESS PLAN RULES:
+- Always look for how this connects to or validates uPath.ai's direction
+- Consider how their AI + sales engineering background gives them an unfair distribution advantage
+- The MVP must be something they can ship in 1-2 weekends using their existing stack
+- Revenue model should match their rate floor ($100+/hr) or build to recurring SaaS
+- Be direct about what's realistic vs. speculative
+- Format as clean Markdown."""
+
+
+def _market_system() -> str:
+    return f"""You are writing a trade plan for an experienced stock trader.
+Their trading profile:
+
+{config.USER_PROFILE}
+
+TRADE PLAN RULES:
+- Write for someone who understands technical analysis — don't over-explain basics
+- The AI sector watchlist is their edge — emphasize any AI/tech narrative driving the move
+- Position sizing: assume they're working with a moderate account, max 5% per trade
+- Always include invalidation scenario (when the thesis is wrong)
+- Be clear about whether this is a momentum trade, swing, or longer-term thesis
+- Format as clean Markdown.
+- Always end with: ⚠️ *Not financial advice. Do your own research.*"""
+
+
+def _content_system() -> str:
+    return f"""You are a content strategist writing AS this person for their personal brand.
+Their voice and positioning:
+
+{config.USER_PROFILE}
+
+CONTENT RULES:
+- Write in their voice: systems-thinker, builder, polymath. Curious about WHY things work.
+- Not preachy, not generic. Real observations from someone actually in the arena.
+- Every piece should build their AI + builder + polymath brand on X/Twitter
+- Include a monetisation angle: affiliate, consulting CTA, product waitlist, or paid newsletter
+- Format as clean Markdown with suggested title, hook tweet, and the full piece."""
+
 
 # ── User prompt templates ───────────────────────────────────────────────────
 
@@ -85,8 +122,17 @@ Description:
 
 URL: {source_url}
 
-Write a winning freelance proposal for this job. Tailor it specifically to their requirements.
-After the proposal, add a section "## Next Steps" with 3 bullet points on how to submit this."""
+Write a winning proposal for this job as if you ARE the person described in the profile above.
+Pull specific experience from their background that directly maps to this client's need.
+After the proposal, add:
+
+## Why You're the Right Fit (for your own reference, not to send)
+- Which skills from your background are the unfair advantage here
+
+## Next Steps
+1. Where/how to submit
+2. What to include with the application
+3. Follow-up timing"""
 
 PROBLEM_PROMPT = """PROBLEM/OPPORTUNITY:
 Title: {title}
@@ -94,45 +140,71 @@ Description:
 {description}
 
 Source: {source_url}
-Evaluation: {reasoning}
+Agent evaluation: {reasoning}
 Estimated earnings: {estimated_earnings}
 
-Create a detailed business plan to build a product/service that solves this problem.
-Structure:
-## Product Concept
-## Target Customer
-## MVP Features (max 5)
-## Revenue Model
-## Go-to-Market (first 30 days)
-## Next Steps (actionable, this week)"""
+Build a business plan for this person to solve this problem and make money from it.
+Consider how this connects to uPath.ai or builds their AI + polymath brand.
+
+## The Problem (restated clearly)
+## Why They're Uniquely Positioned to Solve It
+## Product / Service Concept
+## Target Customer & Willingness to Pay
+## MVP (what to build in 1-2 weekends)
+## Revenue Model & Pricing
+## Go-to-Market: First 30 Days
+## Connection to uPath.ai / Long-term Vision
+## This Week's Actions (max 5 bullet points)"""
 
 MARKET_PROMPT = """MARKET SETUP:
 {description}
 
 Source: {source_url}
-Analysis notes: {reasoning}
+Agent notes: {reasoning}
 
-Write a complete trade plan for this setup. Include all sections listed in your instructions.
+Write a complete, executable trade plan.
 
-After the plan, add:
+## Setup Analysis
+## Entry Criteria
+## Stop Loss
+## Take Profit Targets (T1, T2, T3)
+## Position Size
+## Risk / Reward
+## AI / Tech Narrative (if applicable — how does this connect to the AI boom?)
+## Invalidation Scenario
+
 ## Execution Checklist
-- [ ] step 1
-- [ ] step 2
-(etc.)
+- [ ] Confirm entry condition is met
+- [ ] Set stop loss order
+- [ ] Set T1 limit order
+- [ ] Note the invalidation trigger
+- [ ] Log trade in journal
 
-⚠️ *This is not financial advice. Always do your own research.*"""
+⚠️ *Not financial advice. Do your own research.*"""
+
+CONTENT_PROMPT = """CONTENT OPPORTUNITY:
+{title}
+
+Context: {description}
+
+Write a complete piece of content for this person's polymath / AI builder brand.
+Include:
+1. **Suggested Title** (punchy, specific, curiosity-inducing)
+2. **Hook Tweet** (the X/Twitter post to launch this)
+3. **The Full Piece** (article, thread, or essay — whichever fits best)
+4. **Monetisation CTA** embedded naturally (consulting, uPath.ai waitlist, or newsletter)"""
 
 
 def _get_system_and_prompt(opp: Opportunity) -> tuple[str, str]:
     """Return (system_prompt, user_prompt) for the given opportunity type."""
     if opp.opp_type == OpportunityType.FREELANCE:
-        return FREELANCE_SYSTEM, FREELANCE_PROMPT.format(
+        return _freelance_system(), FREELANCE_PROMPT.format(
             title=opp.title,
             description=opp.description[:1500],
             source_url=opp.source_url,
         )
     elif opp.opp_type == OpportunityType.REDDIT_PROBLEM:
-        return PROBLEM_SYSTEM, PROBLEM_PROMPT.format(
+        return _problem_system(), PROBLEM_PROMPT.format(
             title=opp.title,
             description=opp.description[:1500],
             source_url=opp.source_url,
@@ -140,13 +212,16 @@ def _get_system_and_prompt(opp: Opportunity) -> tuple[str, str]:
             estimated_earnings=opp.estimated_earnings,
         )
     elif opp.opp_type == OpportunityType.MARKET:
-        return MARKET_SYSTEM, MARKET_PROMPT.format(
+        return _market_system(), MARKET_PROMPT.format(
             description=opp.description,
             source_url=opp.source_url,
             reasoning=opp.reasoning,
         )
     else:
-        return CONTENT_SYSTEM, f"Create monetisable content for:\n\n{opp.title}\n\n{opp.description[:1000]}"
+        return _content_system(), CONTENT_PROMPT.format(
+            title=opp.title,
+            description=opp.description[:1000],
+        )
 
 
 def _action_type_for(opp: Opportunity) -> str:
