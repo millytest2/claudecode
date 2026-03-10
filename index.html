@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Creator OS — Free Multi-Platform Content Repurposer</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Creator OS</h1>
+      <p>Repurpose one idea into platform-ready posts — free, local, and in your voice.</p>
+    </header>
+
+    <main class="grid">
+      <section class="panel">
+        <h2>1) Your Voice Profile</h2>
+        <label>
+          Brand / Creator Name
+          <input id="brandName" type="text" placeholder="e.g. Alex Creates" />
+        </label>
+        <label>
+          Audience
+          <input id="audience" type="text" placeholder="e.g. beginner creators building side income" />
+        </label>
+        <label>
+          Tone Keywords (comma separated)
+          <input id="tone" type="text" placeholder="e.g. direct, warm, practical, no fluff" />
+        </label>
+        <label>
+          Signature Phrases
+          <textarea id="signature" rows="3" placeholder="e.g. Keep it simple. Ship it this week."></textarea>
+        </label>
+      </section>
+
+      <section class="panel">
+        <h2>2) Source Content</h2>
+        <label>
+          Core Idea / Script / Notes
+          <textarea id="source" rows="9" placeholder="Paste your long-form content, transcript, notes, or rough thoughts..."></textarea>
+        </label>
+        <label>
+          Goal
+          <select id="goal">
+            <option>Grow audience</option>
+            <option>Build trust</option>
+            <option>Drive traffic</option>
+            <option>Generate leads</option>
+            <option>Sell offer</option>
+          </select>
+        </label>
+      </section>
+
+      <section class="panel">
+        <h2>3) Platforms</h2>
+        <div class="chips" id="platforms">
+          <label><input type="checkbox" value="X / Threads" checked /> X / Threads</label>
+          <label><input type="checkbox" value="LinkedIn" checked /> LinkedIn</label>
+          <label><input type="checkbox" value="Instagram Caption" checked /> Instagram Caption</label>
+          <label><input type="checkbox" value="TikTok Script" checked /> TikTok Script</label>
+          <label><input type="checkbox" value="YouTube Short" checked /> YouTube Short</label>
+          <label><input type="checkbox" value="Email" checked /> Email</label>
+        </div>
+        <label>
+          Variations per Platform
+          <input id="variations" type="number" min="1" max="5" value="2" />
+        </label>
+      </section>
+
+      <section class="panel full">
+        <h2>4) Platform Research Agent Inputs</h2>
+        <p class="muted">Paste what is working right now. This powers platform-by-platform output buckets.</p>
+        <div class="research-grid">
+          <label>
+            Research Window
+            <select id="researchWindow">
+              <option value="7">Last 7 days</option>
+              <option value="14">Last 14 days</option>
+              <option value="30" selected>Last 30 days</option>
+            </select>
+          </label>
+          <label>
+            Niche Keywords
+            <input id="nicheKeywords" type="text" placeholder="e.g. creator economy, faceless content, offer funnels" />
+          </label>
+          <label>
+            Competitors / Accounts to Watch
+            <textarea id="accounts" rows="3" placeholder="e.g. @creator1, @creator2, newsletter xyz"></textarea>
+          </label>
+          <label>
+            Winning Post Samples (1 per line)
+            <textarea id="winningPosts" rows="5" placeholder="Paste links, hooks, or quick notes from high-performing posts."></textarea>
+          </label>
+        </div>
+        <button id="generateBtn">Generate Platform Buckets + Content Plan</button>
+      </section>
+
+      <section class="panel full">
+        <h2>5) Output</h2>
+        <div class="actions">
+          <button id="copyAllBtn">Copy All</button>
+          <button id="exportBtn">Export .txt</button>
+          <button id="clearBtn" class="ghost">Clear</button>
+        </div>
+        <div id="output" class="output">
+          <p class="muted">Your generated content will appear here.</p>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <small>Runs entirely in your browser. No API costs. Profile + research inputs saved locally.</small>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>
